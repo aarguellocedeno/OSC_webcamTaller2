@@ -51,55 +51,54 @@ class DataVisualizer:
         self.grid_height: int = (self.cell_size * self.grid_config.rows) + (self.padding * (self.grid_config.rows + 1))
 
     def _recalculate_layout(self) -> None:
-        show_cam: bool = self.show_camera_runtime
-        show_grid: bool = self.show_grid_runtime
+            show_cam: bool = self.show_camera_runtime
+            show_grid: bool = self.show_grid_runtime
 
-        height: int = self.padding
+            height: int = self.padding
 
-        if show_cam:
-            self.camera_y_offset: int = height
-            height += self.camera_height + self.padding
+            self.button_bar_y: int = height
+            height += self.button_height + self.padding
 
-        if show_grid:
-            self.grid_y_offset: int = height
-            height += self.grid_height + self.padding
+            if show_cam:
+                self.camera_y_offset: int = height
+                height += self.camera_height + self.padding
 
-        height += self.button_height + self.padding
+            if show_grid:
+                self.grid_y_offset: int = height
+                height += self.grid_height + self.padding
 
-        widths: List[int] = []
-        if show_cam:
-            widths.append(self.camera_width)
-        if show_grid:
-            widths.append(self.grid_width)
+            self.height: int = height
+            widths: List[int] = []
+            if show_cam:
+                widths.append(self.camera_width)
+            if show_grid:
+                widths.append(self.grid_width)
+            content_width: int = max(widths) if widths else 400
+            self.width: int = content_width + (2 * self.padding)
 
-        content_width: int = max(widths) if widths else 400
-        self.width: int = content_width + (2 * self.padding)
-        self.height: int = height
+            total_button_width: int = (self.button_width * 3) + (self.button_spacing * 2)
+            button_start_x: int = (self.width - total_button_width) // 2
 
-        button_bar_y: int = self.height - self.button_height - self.padding
-        total_button_width: int = (self.button_width * 3) + (self.button_spacing * 2)
-        button_start_x: int = (self.width - total_button_width) // 2
+            self.close_button_bounds: Tuple[int, int, int, int] = (
+                button_start_x,
+                self.button_bar_y,
+                button_start_x + self.button_width,
+                self.button_bar_y + self.button_height
+            )
 
-        self.close_button_bounds: Tuple[int, int, int, int] = (
-            button_start_x,
-            button_bar_y,
-            button_start_x + self.button_width,
-            button_bar_y + self.button_height
-        )
+            self.toggle_camera_button_bounds: Tuple[int, int, int, int] = (
+                button_start_x + self.button_width + self.button_spacing,
+                self.button_bar_y,
+                button_start_x + (2 * self.button_width) + self.button_spacing,
+                self.button_bar_y + self.button_height
+            )
 
-        self.toggle_camera_button_bounds: Tuple[int, int, int, int] = (
-            button_start_x + self.button_width + self.button_spacing,
-            button_bar_y,
-            button_start_x + (2 * self.button_width) + self.button_spacing,
-            button_bar_y + self.button_height
-        )
-
-        self.toggle_grid_button_bounds: Tuple[int, int, int, int] = (
-            button_start_x + (2 * self.button_width) + (2 * self.button_spacing),
-            button_bar_y,
-            button_start_x + (3 * self.button_width) + (2 * self.button_spacing),
-            button_bar_y + self.button_height
-        )
+            self.toggle_grid_button_bounds: Tuple[int, int, int, int] = (
+                button_start_x + (2 * self.button_width) + (2 * self.button_spacing),
+                self.button_bar_y,
+                button_start_x + (3 * self.button_width) + (2 * self.button_spacing),
+                self.button_bar_y + self.button_height
+            )
 
     def render(self, cells_data: List[CellData], camera_frame: Optional[np.ndarray] = None) -> np.ndarray:
         canvas: np.ndarray = np.zeros((self.height, self.width, 3), dtype=np.uint8)
